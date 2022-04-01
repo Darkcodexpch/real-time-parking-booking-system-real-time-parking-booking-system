@@ -1,0 +1,21 @@
+*{
+    margin:  0px;
+    padding: 0px;
+    box-sizing: border-box;
+
+}
+.slots{
+        border: 1px solid;
+        height: 10rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .slots:hover{
+        transform: translatex(5%);
+        border-color: green;
+        transition: ease-in-out .5s;
+    }

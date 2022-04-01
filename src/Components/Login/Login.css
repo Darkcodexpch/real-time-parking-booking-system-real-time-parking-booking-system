@@ -1,0 +1,29 @@
+body{
+    background-color: rgb(219,226,226)
+}
+.Signup-form{
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 12px 12px 22px grey;
+}
+.btn1 {
+    border: none;
+    outline: none;
+    height: 50px;
+    width: 60vw;
+    background-color: black;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+
+.btn1:hover{
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    transition: .2 ease-in-out;
+}
+.form-ip{
+    width: 60vw;
+}

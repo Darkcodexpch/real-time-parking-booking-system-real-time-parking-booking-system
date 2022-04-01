@@ -1,0 +1,30 @@
+*{
+    margin:0px;
+    padding:0px;
+    box-sizing: border-box;
+
+}
+
+.header{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.header > h3{
+    padding: 5px;
+    color: #fff;
+    margin: 0px 10px;
+}
+
+.nav ul {
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-item{
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 3px;
+    margin: 5px;
+}
