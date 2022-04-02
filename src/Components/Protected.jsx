@@ -4,22 +4,24 @@ function Protected(props) {
   let navigate = useNavigate()
   let Cmp = props.Cmp
   useEffect(()=>{
-    let data = JSON.parse(localStorage.getItem('logindata'));
-      if(!data){
-        navigate('/')
-      }
-  else if (data[0].type === 1) {
-    navigate('/Booker')
-  }
+  //   let data = JSON.parse(localStorage.getItem('logindata'));
+  //     if(!data){
+  //       navigate('/')
+  //     }
+  // else if (data[0].type === 1) {
+  //   navigate('/Booker') 
+  //   navigate('/Mybooking')
+  // }
 
-  else if (data[0].type === 0) {
-    navigate('/Admin')
-  }
+  // else if (data[0].type === 2) {
+  //   navigate('/Admin')
+  // }
 
 
-  else{
-    navigate('/')
-  }
+
+  // else{
+  //   navigate('/')
+  // }
 
     
       

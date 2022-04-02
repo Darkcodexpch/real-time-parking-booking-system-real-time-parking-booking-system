@@ -20,7 +20,8 @@ function Login() {
     if(loginData !== ""){
         localStorage.setItem("logindata",JSON.stringify(loginData));  
     }
-    console.log(loginData)
+    let logdata = JSON.parse(localStorage.getItem("logindata"));
+    
     
     const loginHandler = (e)=>{
         e.preventDefault();
@@ -45,9 +46,9 @@ function Login() {
                         setLoginData([snapshot.val()]
                         )
                         alert("Sucess")
-                        let userdata = JSON.parse(localStorage.getItem("logindata"));
+                        let userdata = JSON.parse(localStorage.getItem("logindata"))
                         if(userdata[0].type === 1){
-                
+                            
                             navigate('/Booker')
             
                         }
@@ -55,9 +56,7 @@ function Login() {
                             navigate('/Admin')
             
                         }
-                        else{
-                            navigate('/Signup')
-                        }
+            
                     }
                      
                   })

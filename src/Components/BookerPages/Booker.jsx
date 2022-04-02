@@ -9,14 +9,14 @@ import Footer from '../Footer/Footer'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 
 
-function Booker() {
-    let navigate = useNavigate()
-    const logoutHandler = () => {
-        console.log("Hello")
-        localStorage.removeItem("logindata");
+function Booker(){
+    let navigate = useNavigate();
+    const logoutHandler = ()=>{
+        localStorage.removeItem('logindata');
         navigate('/')
-
+        
     }
+    // let logdata = JSON.parse(localStorage.getItem('logindata'));
 
     return (
         <>
@@ -29,9 +29,10 @@ function Booker() {
             </Row>
             {/* AdminHead */}
             <Row className='my-2'>
-                <Col md={12} className="d-flex justify-content-center">
-                    <h1 className='Admin-Head'>Welcome Booker Name</h1>
-                    {/* <Button variant='danger'>Logout</Button> */}
+                <Col md={12} className="d-flex justify-content-around">
+                {/* {logdata && `Welcom ${logdata[0].name}`} */}
+                    <h1 className='Admin-Head'>Welocme</h1>
+                    <Button variant='danger' onClick={logoutHandler}>Logout</Button>
                 </Col>
             </Row>
 
@@ -49,9 +50,6 @@ function Booker() {
                         <NavLink to="/Booker/Feedback">
                             <li className='sidebarli shadow-sm p-2 mb-3 rounded'>Add Feedback to Admin</li>
                         </NavLink>
-                       <li className='sidebarli shadow-sm p-2 mb-3 rounded'><button onClick={logoutHandler}>Logout</button> </li>
-
-
                     </ul>
                 </Col>
                 <Col md={8}>
