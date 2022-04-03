@@ -52,6 +52,7 @@
 
 // Method two for Routing
 import Protected from './Protected'
+import Addslots from './Admin/Addslots'
 import { BookingSlots } from './BookerPages/BookingSlots'
 import AddFeeback from './BookerPages/Addfeedback'
 import MyBooking from './BookerPages/MyBooking'
@@ -77,6 +78,7 @@ export default function Main() {
         <Route path='' element={<AdminBookingPage/>}></Route>
         <Route path='Bookingdetails' element={<BookingDetails/>}></Route>
         <Route path='Feedback' element={<Feedback/>}></Route>
+        <Route path='Addslots' element={<Addslots/>}></Route>
       </Route>
       {/* </Route> */}
 

@@ -2,7 +2,9 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
+import Modal from 'react-bootstrap/Modal'
 import './Admin.css'
+import { useState } from 'react'
 import React from 'react'
 import AdminBookingPage from './AdminBookingPage'
 import BookingDetails from './BookingDetails'
@@ -36,6 +38,7 @@ function Admin() {
                         <NavLink to="/Admin"><li className='sidebarli shadow-sm p-2 mb-3 rounded'>User Data</li></NavLink>
                         <NavLink to="/Admin/Bookingdetails"><li className='sidebarli shadow-sm p-2 mb-3 rounded'>Booking Data</li></NavLink>
                         <NavLink to="/Admin/Feedback"> <li className='sidebarli shadow-sm p-2 mb-3 rounded'>Feedbacks</li></NavLink>
+                        <NavLink to="/Admin/Addslots"> <li className='sidebarli shadow-sm p-2 mb-3 rounded'>Add Slots</li></NavLink>
                     </ul>
                 </Col>
                 <Col md={8}>
@@ -43,6 +46,7 @@ function Admin() {
                 </Col>
             </Row>
        <Footer/>
+
         </>
     )
 }

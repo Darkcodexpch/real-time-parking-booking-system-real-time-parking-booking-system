@@ -16,7 +16,9 @@ function Booker(){
         navigate('/')
         
     }
-    // let logdata = JSON.parse(localStorage.getItem('logindata'));
+    // let data = []
+    // data.push(obj)
+    // console.log(data.map((k)=>k.parking[0]))
 
     return (
         <>
