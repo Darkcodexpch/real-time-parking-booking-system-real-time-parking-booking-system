@@ -4,10 +4,31 @@ import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import Form from 'react-bootstrap/Form'
 import { db } from '../Firebase/FirebaseConfig'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 function Addslots() {
     const [nameparking, setNameparking] = useState('')
     const [numberparking, setNumberparking] = useState('')
+
+    const [userData, setUserDAta] = useState('')
+    useEffect(() => {
+        db.ref("slotdetails").on('value', (snapshot) => {
+            let newdata = [];
+            snapshot.forEach(data => {
+                newdata.push({ data: data.val() })
+
+            })
+            newdata && setUserDAta(newdata)
+        })
+    }, [])
+
+    const editHandler = (id)=>{
+        console.log(id)
+    }
+    const deleteHandler = (id)=>{
+        console.log(id)
+        
+    }
+
 
     const addSlotsHandler = (e) => {
         e.preventDefault();
@@ -64,13 +85,16 @@ function Addslots() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Slot Name</td>
-                                <td>Slot Number</td>
+                            {userData && userData.map((v,k)=>{
+                                return <tr key={k}>
+                                <td>{k+1}</td>
+                                <td>{v.data.nameparking}</td>
+                                <td>{v.data.numberparking}</td>
                                 <td><Button variant='primary'>Edit</Button></td>
                                 <td><Button variant='danger'>Cancle</Button></td>
                             </tr>
+ 
+                            })}
                         </tbody>
                     </Table>
                 </Col>
