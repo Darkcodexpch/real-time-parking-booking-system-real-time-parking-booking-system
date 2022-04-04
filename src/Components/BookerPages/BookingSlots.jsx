@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 
 export const BookingSlots = () => {
     let logdata =  JSON.parse(localStorage.getItem('logindata'));
-    console.log("lodData",logdata)
     const [parkingdata, setParkingData] = useState();
     useEffect(() => {
         db.ref("Parkings").on('value', (snapshot) => {
@@ -25,8 +24,8 @@ export const BookingSlots = () => {
     // logdata[0].name
     // logdata[0].uid
     const [show, setShow] = useState(false);
-    const [bookername, setBookername] = useState('')
-    const [userid, setUserid] = useState('')
+    const [bookername, setBookername] = useState(logdata[0].name)
+    const [userid, setUserid] = useState(logdata[0].uid)
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
     const [bookingstatus, setBookingstatus] = useState(true);
@@ -62,6 +61,7 @@ export const BookingSlots = () => {
             setBookerid('')
             setEndDate('')
             setStartDate('')
+            setShow(false)
         }
 
 
@@ -106,7 +106,6 @@ export const BookingSlots = () => {
     return (
         <>
             {slotData && slotData.map((v, index) => {
-                console.log("v", v.data.nameparking)
                 return <Row className="text-center mt-2 myd" key={v.data.numberparking}>
                     <h3>{v.data.nameparking}</h3>
                     {new Array(Number(v.data.numberparking)).fill(" ").map((a, i) => {
