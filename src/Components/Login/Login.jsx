@@ -2,7 +2,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './Login.css'
 import { useNavigate } from "react-router-dom";
 import Header from '../Header/Header'
@@ -16,13 +16,15 @@ function Login() {
     let navigate = useNavigate()
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('')
-    const [loginData,setLoginData] = useState('')
-    if(loginData !== ""){
-        localStorage.setItem("logindata",JSON.stringify(loginData));  
-    }
-    let logdata = JSON.parse(localStorage.getItem("logindata"));
-    
-    
+    // const [loginData,setLoginData] = useState('')
+    // useEffect(()=>{
+    //     if(loginData !== ""){
+    //         localStorage.setItem("logindata",JSON.stringify(loginData));
+    //     }
+         
+    //     console.log("LoginData: ", loginData)
+    // },[loginData])
+ 
     const loginHandler = (e)=>{
         e.preventDefault();
         if(email==="" || password===""){
@@ -38,29 +40,20 @@ function Login() {
         }
         else{
             auth.signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
+            .then(async (userCredential) => {
                 // Signed in
                 var user = userCredential.user;   
                 db.ref().child("users").child(user.uid).get().then((snapshot) => {
-                    if (snapshot.exists()) {
-                        setLoginData([snapshot.val()]
-                        )
-                        alert("Sucess")
-                        let userdata = JSON.parse(localStorage.getItem("logindata"))
-                        if(userdata[0].type === 1){
-                            
-                            navigate('/Booker')
-            
-                        }
-                        else if(userdata[0].type === 2){
-                            navigate('/Admin')
-            
-                        }
-            
+                    if (!snapshot.exists()) return;
+                    let userdata = snapshot.val()
+                    localStorage.setItem("logindata",JSON.stringify([userdata]));
+                    if(userdata?.type === 1){
+                        navigate('/Booker')
                     }
-                     
+                    else if(userdata?.type === 2){
+                        navigate('/Admin')
+                    }
                   })
-                // ...
               })
               .catch((error) => {
                 console.error(error);

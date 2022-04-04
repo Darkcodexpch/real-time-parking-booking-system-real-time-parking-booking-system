@@ -16,9 +16,7 @@ function Booker(){
         navigate('/')
         
     }
-    // let data = []
-    // data.push(obj)
-    // console.log(data.map((k)=>k.parking[0]))
+    let logdata =  JSON.parse(localStorage.getItem('logindata'));
 
     return (
         <>
@@ -32,8 +30,7 @@ function Booker(){
             {/* AdminHead */}
             <Row className='my-2'>
                 <Col md={12} className="d-flex justify-content-around">
-                {/* {logdata && `Welcom ${logdata[0].name}`} */}
-                    <h1 className='Admin-Head'>Welocme</h1>
+                    <h1 className='Admin-Head'>{`Welcom ${logdata && logdata[0].name}`}</h1>
                     <Button variant='danger' onClick={logoutHandler}>Logout</Button>
                 </Col>
             </Row>

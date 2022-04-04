@@ -1,10 +1,13 @@
 import Row from 'react-bootstrap/Row'
+import uuid from 'react-uuid'
+import Modal from 'react-bootstrap/Modal'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import Form from 'react-bootstrap/Form'
 import { db } from '../Firebase/FirebaseConfig'
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { useToastContainer } from 'react-toastify'
 function Addslots() {
     const [nameparking, setNameparking] = useState('')
     const [numberparking, setNumberparking] = useState('')
@@ -21,31 +24,54 @@ function Addslots() {
         })
     }, [])
 
-    const editHandler = (id)=>{
-        console.log(id)
+    const [show,setShow] = useState('')
+    const [updateparkingname,setUpdateparkingname] = useState('');
+    const [updateparkingnumber,setUpdateparkingnumber] = useState('');
+    const [id,setId] = useState('')
+    const handleClose = () => setShow(false);
+    const handleShow = (data) => {
+        setShow(true)
+        setUpdateparkingname(data.nameparking);
+        setUpdateparkingnumber(data.numberparking);
+        setId(data.id)
+
     }
-    const deleteHandler = (id)=>{
-        console.log(id)
-        
+
+    const editHandler = () => {
+        db.ref("slotdetails").child(`${id}`).update({ nameparking: updateparkingname, numberparking: updateparkingnumber }).then(() => {
+            alert("Data Updated")
+            setUpdateparkingname('')
+            setUpdateparkingnumber('')
+            setShow(false)
+
+        })
+    }
+    const deleteHandler = (id) => {
+        db.ref("slotdetails").child(id).remove()
+    setUserDAta(userData.filter((elem, index) => { if (elem.data.id != id) return elem }))
+    alert("Deleted Succesfully")
+
     }
 
 
     const addSlotsHandler = (e) => {
         e.preventDefault();
-        if(nameparking ==='' ||numberparking==='' ){
-        alert("Fill All fields")
+        if (nameparking === '' || numberparking === '') {
+            alert("Fill All fields")
         }
-        else{
+        else {
+            let id = uuid();
             let slotDetails = {
+                id,
                 nameparking,
                 numberparking
             }
-            db.ref('/').child('slotdetails').push(slotDetails)
+            db.ref('/').child(`slotdetails/${id}`).set(slotDetails)
             alert("slot Added Successfully")
             setNameparking('')
             setNumberparking('')
         }
-        
+
 
     }
     return (
@@ -74,7 +100,7 @@ function Addslots() {
             <Row>
                 <Col md={12}>
                     <h3 className='text-muted text-center'>Slots Details</h3>
-                    <Table striped bordered hover>
+                    {userData.length === 0 ? <h3 className='text-center mt-5 text-muted'>No data Available</h3> : <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -85,20 +111,37 @@ function Addslots() {
                             </tr>
                         </thead>
                         <tbody>
-                            {userData && userData.map((v,k)=>{
+                            {userData && userData.map((v, k) => {
                                 return <tr key={k}>
-                                <td>{k+1}</td>
-                                <td>{v.data.nameparking}</td>
-                                <td>{v.data.numberparking}</td>
-                                <td><Button variant='primary'>Edit</Button></td>
-                                <td><Button variant='danger'>Cancle</Button></td>
-                            </tr>
- 
+                                    <td>{k + 1}</td>
+                                    <td>{v.data.nameparking}</td>
+                                    <td>{v.data.numberparking}</td>
+                                    <td><Button variant='primary' onClick={()=>handleShow(v.data)}>Edit</Button></td>
+                                    <td><Button variant='danger' onClick={()=>deleteHandler(v.data.id)}>Delete</Button></td>
+                                </tr>
+
                             })}
                         </tbody>
-                    </Table>
+                    </Table>}
                 </Col>
             </Row>
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Update Slot Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <input type="text" className='form-control m-2' value={updateparkingname} onChange={(e) => { setUpdateparkingname(e.target.value) }} />
+                    <input type="text" className='form-control m-2' value={updateparkingnumber} onChange={(e) => { setUpdateparkingnumber(e.target.value) }} />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={editHandler}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }

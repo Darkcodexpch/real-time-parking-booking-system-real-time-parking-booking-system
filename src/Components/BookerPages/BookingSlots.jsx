@@ -3,11 +3,13 @@ import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import { db } from '../Firebase/FirebaseConfig'
 import Modal from 'react-bootstrap/Modal'
+import uuid from 'react-uuid'
 import { useState, useEffect } from 'react'
 
 export const BookingSlots = () => {
+    let logdata =  JSON.parse(localStorage.getItem('logindata'));
+    console.log("lodData",logdata)
     const [parkingdata, setParkingData] = useState();
-    let lodData = JSON.parse(localStorage.getItem('logindata'));
     useEffect(() => {
         db.ref("Parkings").on('value', (snapshot) => {
             let newdata = []
@@ -19,9 +21,12 @@ export const BookingSlots = () => {
     }, [])
 
     // Modal Work
+
+    // logdata[0].name
+    // logdata[0].uid
     const [show, setShow] = useState(false);
-    const [bookername, setBookername] = useState(lodData[0].name)
-    const [userid, setUserid] = useState(lodData[0].uid)
+    const [bookername, setBookername] = useState('')
+    const [userid, setUserid] = useState('')
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
     const [bookingstatus, setBookingstatus] = useState(true);
@@ -40,7 +45,9 @@ export const BookingSlots = () => {
             alert("Please fill All fields")
         }
         else {
+            let id = uuid()
             let bookingData = {
+                id,
                 parking,
                 bookerid,
                 bookername,
@@ -50,7 +57,7 @@ export const BookingSlots = () => {
                 bookingstatus
 
             }
-            db.ref('/').child('Bookedslots').push(bookingData)
+            db.ref('/').child(`Bookedslots/${id}`).set(bookingData)
             alert("slot booked Successfully")
             setBookerid('')
             setEndDate('')
@@ -59,7 +66,6 @@ export const BookingSlots = () => {
 
 
     }
-    let logdata = JSON.parse(localStorage.getItem('logindata'));
 
     // get slotData
     const [slotData, setSlotDAta] = useState('')
@@ -74,16 +80,38 @@ export const BookingSlots = () => {
         })
     }, [])
 
+    // get Booked SlotDAta
+    const [getBookedSlotData, setgetBookedSlotData] = useState('')
+    useEffect(() => {
+        db.ref("Bookedslots").on('value', (snapshot) => {
+            let newdata = [];
+            snapshot.forEach(data => {
+                newdata.push({ data: data.val() })
+
+            })
+            newdata && setgetBookedSlotData(newdata)
+        })
+    }, [])
+
+    const bookedSlot = (v, i) => {
+        if (!getBookedSlotData) return <></>
+        const data = getBookedSlotData.find(({ data }) => data.bookerid == i && data.parking == v.data.nameparking)
+        return data ? <button key={i} className='slots' style={{backgroundColor:"yellow"}} onClick={() => handleShow(i, v.data.nameparking)} disabled>
+        <h3>{`Slot ${i + 1} Booked`}</h3>
+    </button> : <button key={i} className='slots' onClick={() => handleShow(i, v.data.nameparking)}>
+            <h3>{`Slot ${i + 1}`}</h3>
+        </button>
+    }
+
     return (
         <>
-            {slotData && slotData.map(({ data }, index) => {
-                return <Row className="text-center mt-2 myd" key={data.numberparking}>
-                    <h3>{data.nameparking}</h3>
-                    {new Array(Number(data.numberparking)).fill(" ").map((a, i) => {
+            {slotData && slotData.map((v, index) => {
+                console.log("v", v.data.nameparking)
+                return <Row className="text-center mt-2 myd" key={v.data.numberparking}>
+                    <h3>{v.data.nameparking}</h3>
+                    {new Array(Number(v.data.numberparking)).fill(" ").map((a, i) => {
                         return <Col md={4} key={i} className='my-2'>
-                            <button key={i} className='slots' onClick={() => handleShow(i, data.nameparking)}>
-                                <h3>{`Slot ${i + 1}`}</h3>
-                            </button>
+                            {bookedSlot(v, i)}
                         </Col>
                     })}
 

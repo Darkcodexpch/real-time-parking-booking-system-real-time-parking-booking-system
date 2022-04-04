@@ -19,12 +19,14 @@ export default function BookingDetails() {
             newdata && setUserDAta(newdata)
         })
     }, [])
-console.log(userData)
+    console.log(userData)
     const editHandler = (id) => {
         console.log(id)
     }
     const deleteHandler = (id) => {
-        console.log(id)
+        db.ref("Bookedslots").child(id).remove()
+        setUserDAta(userData.filter((elem, index) => { if (elem.data.id != id) return elem }))
+        alert("delete Succefully")
 
     }
     return (
@@ -33,10 +35,11 @@ console.log(userData)
                 <Col md={12}>
                     <input type="search" placeholder='Search' className='form-control searchip' />
                 </Col>
-            </Row><Row className='mt-3'>
+            </Row>
+            <Row className='mt-3'>
                 <Col md={12}>
                     <h3 className='text-muted text-center'>Booking Details</h3>
-                    <Table striped bordered hover>
+                    {(userData.length === 0) ? <h3 className='text-center mt-5 text-muted'>No data Available</h3> : <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -44,7 +47,6 @@ console.log(userData)
                                 <th>Booker Name</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
-                                <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -55,12 +57,13 @@ console.log(userData)
                                 <td>{v.data.bookername}</td>
                                 <td>{v.data.startDate}</td>
                                 <td>{v.data.endDate}</td>
-                                <td><Button variant='primary' onClick={() => editHandler(v.data.uid)}>Edit</Button></td>
-                                <td><Button variant='danger' onClick={() => deleteHandler(v.data.uid)}>Delete</Button></td></tr>
+                                <td><Button variant='danger' onClick={() => deleteHandler(v.data.id)}>Delete</Button></td></tr>
                         })}
 
                         </tbody>
                     </Table>
+
+                    }
                 </Col>
             </Row>
 

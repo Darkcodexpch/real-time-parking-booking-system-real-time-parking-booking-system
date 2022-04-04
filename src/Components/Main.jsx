@@ -86,7 +86,7 @@ export default function Main() {
       <Route path="Booker" element={<Booker />}>
       <Route path='' element={<BookingSlots/>}></Route>
       <Route path='MyBooking' element={<MyBooking/>}></Route>
-      <Route path="Feedback" element={<Feedback/>}></Route>
+      <Route path="Feedback" element={<AddFeeback/>}></Route>
       </Route>
       {/* </Route> */}
       </Routes>
