@@ -7,6 +7,7 @@ import './Admin.css'
 import React from 'react'
 import { db } from '../Firebase/FirebaseConfig'
 import { useEffect, useState } from 'react'
+import { setSelectionRange } from '@testing-library/user-event/dist/utils'
 function AdminBookingPage() {
     const [userData, setUserDAta] = useState('')
     useEffect(() => {
@@ -16,7 +17,10 @@ function AdminBookingPage() {
                 newdata.push({ data: data.val() })
 
             })
-            newdata && setUserDAta(newdata)
+            let filter = newdata.filter((elem)=>{
+                return elem.data.type===1
+            })
+            setUserDAta(filter)
         })
     }, [])
 

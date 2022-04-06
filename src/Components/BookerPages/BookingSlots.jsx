@@ -41,6 +41,8 @@ export const BookingSlots = () => {
         setParking(daata)
         setBookerid(i)
     }
+
+    console.log(startDate)
     let emailid = uuid();
     // email work
     const [message, setmessage] = useState(`Hello ${logdata[0].name} your Booking number is ${emailid}`);
@@ -98,7 +100,7 @@ export const BookingSlots = () => {
 
 
       //    get current Date Slots work
-const [currentDAte, setCurrentDate] = useState(moment().format('MMM DD YYYY h:mm A'))
+// const [currentDAte, setCurrentDate] = useState(moment().format('MMM DD YYYY h:mm A'))
     // get Booked SlotDAta
     const [getBookedSlotData, setgetBookedSlotData] = useState('')
     useEffect(() => {
@@ -112,39 +114,16 @@ const [currentDAte, setCurrentDate] = useState(moment().format('MMM DD YYYY h:mm
         })
     }, [])
 
-//     console.log("enddate",getBookedSlotData[0]?.data.endDate)
-//     console.log("currentdate",currentDAte)
-//     if(endDate < getBookedSlotData[0]?.data.endDate){
-//         console.log("Chalega")
-
-//     }
-//     else if(endDate > getBookedSlotData[0]?.data.endDate){
-//       console.log("Nh chalega")
-//     }
-// else{
-//     console.log("Nh araha")
-// }
-    // bokeed slot function
-
     const bookedSlot = (v, i) => {
-        //     if (!getBookedSlotData) return <></>
-        //     const data = getBookedSlotData.find(({ data }) => data.bookerid == i && data.parking == v.data.nameparking)
-        //     // console.log(data)
-        //     // || currentDAte <= data.endDate
-        //     return data ? <button key={i} className='slots' style={{backgroundColor:"green"}} onClick={() => handleShow(i, v.data.nameparking)}>
-        //     <h3>{`Slot ${i + 1} Booked`}</h3>
-        // </button> : <button key={i} className='slots' onClick={() => handleShow(i, v.data.nameparking)}>
-        //         <h3>{`Slot ${i + 1}`}</h3>
-        //     </button>
         if (!getBookedSlotData) {
             return <></>
-        } else if (getBookedSlotData.find(({ data }) => data.bookerid === i && data.parking === v.data.nameparking && currentDAte < moment(data.endDate).format('MMM DD YYYY h:mm A'))) {
+        } else if (getBookedSlotData.find(({ data }) => data.bookerid === i && data.parking === v.data.nameparking && moment(endDate).format('MMM DD YYYY h:mm A') < moment(data.endDate).format('MMM DD YYYY h:mm A'))) {
             return <button key={i} className='slots' style={{ backgroundColor: "green" }} onClick={() => handleShow(i, v.data.nameparking)} disabled>
                 <h3>{`Slot ${i + 1} Booked`}</h3>
             </button>
         } else {
-            return <button key={i} className='slots' onClick={() => handleShow(i, v.data.nameparking)}>
-                <h3>{`Slot ${i + 1}`}</h3>
+            return <button key={i} className='slots' style={{backgroundColor:"red",color:"white"}} onClick={() => handleShow(i, v.data.nameparking)}>
+                <h3>{`Slot ${i + 1} Available For booking`}</h3>
             </button>
         }
     }
@@ -163,19 +142,18 @@ const [currentDAte, setCurrentDate] = useState(moment().format('MMM DD YYYY h:mm
                             <Form.Label>Enter End time</Form.Label>
                             <Form.Control type="datetime-local" value={endDate} onChange={(e) => { setEndDate(e.target.value) }}/>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        {/* <Button variant="primary" type="submit">
                             View Available slots
-                        </Button>
+                        </Button> */}
                     </Form>
 
                 </Col>
             </Row>
-            {slotData && slotData.map((v, index) => {
+
+            {endDate ===''?<h1>Please Select dates to show slots</h1>: slotData && slotData.map((v, index) => {
                 return <Row className="text-center mt-2 myd" key={v.data.numberparking}>
                     <h3>{v.data.nameparking}</h3>
                     {new Array(Number(v.data.numberparking)).fill(" ").map((a, i) => {
-                    // getBookedSlotData.find(({data}) =>console.log(data))          
-                // booking find (parkringnumber ===, slot===  )
                         return <Col md={4} key={i} className='my-2'>
                             {bookedSlot(v, i)}
                         </Col>
