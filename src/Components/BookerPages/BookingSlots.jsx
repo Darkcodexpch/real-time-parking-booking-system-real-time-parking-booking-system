@@ -112,18 +112,18 @@ const [currentDAte, setCurrentDate] = useState(moment().format('MMM DD YYYY h:mm
         })
     }, [])
 
-    console.log("enddate",getBookedSlotData[0]?.data.endDate)
-    console.log("currentdate",currentDAte)
-    if(endDate < getBookedSlotData[0]?.data.endDate){
-        console.log("Chalega")
+//     console.log("enddate",getBookedSlotData[0]?.data.endDate)
+//     console.log("currentdate",currentDAte)
+//     if(endDate < getBookedSlotData[0]?.data.endDate){
+//         console.log("Chalega")
 
-    }
-    else if(endDate > getBookedSlotData[0]?.data.endDate){
-      console.log("Nh chalega")
-    }
-else{
-    console.log("Nh araha")
-}
+//     }
+//     else if(endDate > getBookedSlotData[0]?.data.endDate){
+//       console.log("Nh chalega")
+//     }
+// else{
+//     console.log("Nh araha")
+// }
     // bokeed slot function
 
     const bookedSlot = (v, i) => {
@@ -138,8 +138,8 @@ else{
         //     </button>
         if (!getBookedSlotData) {
             return <></>
-        } else if (getBookedSlotData.find(({ data }) => data.bookerid === i && data.parking === v.data.nameparking)) {
-            return <button key={i} className='slots' style={{ backgroundColor: "green" }} onClick={() => handleShow(i, v.data.nameparking)}>
+        } else if (getBookedSlotData.find(({ data }) => data.bookerid === i && data.parking === v.data.nameparking && currentDAte < moment(data.endDate).format('MMM DD YYYY h:mm A'))) {
+            return <button key={i} className='slots' style={{ backgroundColor: "green" }} onClick={() => handleShow(i, v.data.nameparking)} disabled>
                 <h3>{`Slot ${i + 1} Booked`}</h3>
             </button>
         } else {
@@ -174,7 +174,7 @@ else{
                 return <Row className="text-center mt-2 myd" key={v.data.numberparking}>
                     <h3>{v.data.nameparking}</h3>
                     {new Array(Number(v.data.numberparking)).fill(" ").map((a, i) => {
-
+                    // getBookedSlotData.find(({data}) =>console.log(data))          
                 // booking find (parkringnumber ===, slot===  )
                         return <Col md={4} key={i} className='my-2'>
                             {bookedSlot(v, i)}
