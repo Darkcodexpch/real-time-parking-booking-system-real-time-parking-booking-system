@@ -4,8 +4,14 @@ import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import { db } from '../Firebase/FirebaseConfig'
 import { useState,useEffect } from 'react'
+import React,{useRef} from 'react';
+import { useReactToPrint } from "react-to-print";
 
 export default function MyBooking() {
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
     let user = JSON.parse(localStorage.getItem('logindata'));
     const [bookingData,setbookingData] = useState('')
     useEffect(() => {
@@ -39,7 +45,7 @@ export default function MyBooking() {
       <Row className='mt-3'>
               <Col md={12}>
                   <h3 className='text-muted text-center'>My Booking</h3>
-                  {bookingData.length === 0 ? <h3 className='text-center mt-5 text-muted'>No data Available</h3>:<Table striped bordered hover>
+                  {bookingData.length === 0 ? <h3 className='text-center mt-5 text-muted'>No data Available</h3>:<Table striped bordered hover ref={componentRef}>
                       <thead>
                           <tr>
                               <th>#</th>
@@ -48,6 +54,7 @@ export default function MyBooking() {
                               <th>Start Time</th>
                               <th>End Time</th>
                               <th>Cancle Booking</th>
+                              <th>Print Recipt</th>
                           </tr>
                       </thead>
                       <tbody>{bookingData && bookingData.map((v,k)=>{
@@ -58,10 +65,10 @@ export default function MyBooking() {
                               <td>{v.data.startDate}</td>
                               <td>{v.data.endDate}</td>
                               <td><Button variant='danger' onClick={()=>{(cancleBookingHandler(v.data.id))}}>Cancle</Button></td>
+                              <td><Button onClick={handlePrint} variant="primary">Print Recipt</Button></td>
                           </tr>})}</tbody>
                   </Table>}
               </Col>
           </Row>
           </>
-  )
-}
+  )}

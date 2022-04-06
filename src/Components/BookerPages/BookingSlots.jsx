@@ -1,12 +1,14 @@
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
+import emailjs, { init } from "@emailjs/browser";
 import { db } from '../Firebase/FirebaseConfig'
 import Modal from 'react-bootstrap/Modal'
 import uuid from 'react-uuid'
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useRef } from 'react'
 
 export const BookingSlots = () => {
+  init("PAfOiyPTYcTSLRiQK");
+  const form = useRef();
     let logdata =  JSON.parse(localStorage.getItem('logindata'));
     const [parkingdata, setParkingData] = useState();
     useEffect(() => {
@@ -18,6 +20,7 @@ export const BookingSlots = () => {
             setParkingData(newdata)
         })
     }, [])
+
 
     // Modal Work
 
@@ -38,8 +41,12 @@ export const BookingSlots = () => {
         setParking(daata)
         setBookerid(i)
     }
+    let emailid = uuid();
+   // email work
+    const [message,setmessage] = useState(`Hello ${logdata[0].name} your Booking number is ${emailid}`);
 
-    const bookingHandler = () => {
+    const bookingHandler = (e) => {
+        e.preventDefault()
         if (parking === '' || bookerid === '' || bookername === '' || startDate === '' || endDate === '') {
             alert("Please fill All fields")
         }
@@ -53,9 +60,7 @@ export const BookingSlots = () => {
                 userid,
                 startDate,
                 endDate,
-                bookingstatus
-
-            }
+                bookingstatus}
             db.ref('/').child(`Bookedslots/${id}`).set(bookingData)
             alert("slot booked Successfully")
             setBookerid('')
@@ -63,6 +68,16 @@ export const BookingSlots = () => {
             setStartDate('')
             setShow(false)
         }
+
+        emailjs.sendForm("service_xlvqvk7", "template_hhwgxkh", form.current, "PAfOiyPTYcTSLRiQK").then(
+            (result) => {
+              alert("Message Sent Successfully");
+              console.log(result.text);
+            },
+            (error) => {
+              console.log(error.text);
+            }
+          );
 
 
     }
@@ -93,6 +108,9 @@ export const BookingSlots = () => {
         })
     }, [])
 
+
+    // bokeed slot function
+
     const bookedSlot = (v, i) => {
         if (!getBookedSlotData) return <></>
         const data = getBookedSlotData.find(({ data }) => data.bookerid == i && data.parking == v.data.nameparking)
@@ -102,6 +120,7 @@ export const BookingSlots = () => {
             <h3>{`Slot ${i + 1}`}</h3>
         </button>
     }
+
 
     return (
         <>
@@ -122,18 +141,15 @@ export const BookingSlots = () => {
                     <Modal.Title>Book This Slot</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <input type="text" className='form-control m-2' placeholder='Booker id' value={bookerid} onChange={(e) => { setBookerid(e.target.value) }} />
+                    <form onSubmit={bookingHandler} ref={form}>
+                    <input type="text" className='form-control m-2' placeholder='Booker id' value={bookerid} onChange={(e) => { setBookerid(e.target.value) }} name='bookerid' />
+                    <input type="text" className='form-control m-2' placeholder='Booker id' value={bookername} onChange={(e) => { setBookername(e.target.value) }} name='bookername'/>
                     <input type="datetime-local" className='form-control m-2' value={startDate} onChange={(e) => { setStartDate(e.target.value) }} />
                     <input type="datetime-local" className='form-control m-2' value={endDate} onChange={(e) => { setEndDate(e.target.value) }} />
+                    <input type="hidden" className='form-control m-2' value={message} onChange={(e) => { setmessage(e.target.value) }} name='message'/>
+                    <button className='btn btn-primary mt-2'>Submit</button>
+                    </form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={bookingHandler}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
             </Modal>
 
         </>
