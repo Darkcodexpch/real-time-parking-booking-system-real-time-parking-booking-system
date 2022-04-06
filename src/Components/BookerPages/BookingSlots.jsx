@@ -1,15 +1,18 @@
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import emailjs, { init } from "@emailjs/browser";
+import emailjs, { init } from "@emailjs/browser"
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
 import { db } from '../Firebase/FirebaseConfig'
 import Modal from 'react-bootstrap/Modal'
 import uuid from 'react-uuid'
-import { useState, useEffect,useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import moment from 'moment';
 
 export const BookingSlots = () => {
-  init("PAfOiyPTYcTSLRiQK");
-  const form = useRef();
-    let logdata =  JSON.parse(localStorage.getItem('logindata'));
+    init("PAfOiyPTYcTSLRiQK");
+    const form = useRef();
+    let logdata = JSON.parse(localStorage.getItem('logindata'));
     const [parkingdata, setParkingData] = useState();
     useEffect(() => {
         db.ref("Parkings").on('value', (snapshot) => {
@@ -23,9 +26,6 @@ export const BookingSlots = () => {
 
 
     // Modal Work
-
-    // logdata[0].name
-    // logdata[0].uid
     const [show, setShow] = useState(false);
     const [bookername, setBookername] = useState(logdata[0].name)
     const [userid, setUserid] = useState(logdata[0].uid)
@@ -42,8 +42,8 @@ export const BookingSlots = () => {
         setBookerid(i)
     }
     let emailid = uuid();
-   // email work
-    const [message,setmessage] = useState(`Hello ${logdata[0].name} your Booking number is ${emailid}`);
+    // email work
+    const [message, setmessage] = useState(`Hello ${logdata[0].name} your Booking number is ${emailid}`);
 
     const bookingHandler = (e) => {
         e.preventDefault()
@@ -60,7 +60,8 @@ export const BookingSlots = () => {
                 userid,
                 startDate,
                 endDate,
-                bookingstatus}
+                bookingstatus
+            }
             db.ref('/').child(`Bookedslots/${id}`).set(bookingData)
             alert("slot booked Successfully")
             setBookerid('')
@@ -71,13 +72,13 @@ export const BookingSlots = () => {
 
         emailjs.sendForm("service_xlvqvk7", "template_hhwgxkh", form.current, "PAfOiyPTYcTSLRiQK").then(
             (result) => {
-              alert("Message Sent Successfully");
-              console.log(result.text);
+                alert("Message Sent Successfully");
+                console.log(result.text);
             },
             (error) => {
-              console.log(error.text);
+                console.log(error.text);
             }
-          );
+        );
 
 
     }
@@ -95,6 +96,9 @@ export const BookingSlots = () => {
         })
     }, [])
 
+
+      //    get current Date Slots work
+const [currentDAte, setCurrentDate] = useState(moment().format('MMM DD YYYY h:mm A'))
     // get Booked SlotDAta
     const [getBookedSlotData, setgetBookedSlotData] = useState('')
     useEffect(() => {
@@ -108,26 +112,70 @@ export const BookingSlots = () => {
         })
     }, [])
 
+    console.log("enddate",getBookedSlotData[0]?.data.endDate)
+    console.log("currentdate",currentDAte)
+    if(endDate < getBookedSlotData[0]?.data.endDate){
+        console.log("Chalega")
 
+    }
+    else if(endDate > getBookedSlotData[0]?.data.endDate){
+      console.log("Nh chalega")
+    }
+else{
+    console.log("Nh araha")
+}
     // bokeed slot function
 
     const bookedSlot = (v, i) => {
-        if (!getBookedSlotData) return <></>
-        const data = getBookedSlotData.find(({ data }) => data.bookerid == i && data.parking == v.data.nameparking)
-        return data ? <button key={i} className='slots' style={{backgroundColor:"yellow"}} onClick={() => handleShow(i, v.data.nameparking)} disabled>
-        <h3>{`Slot ${i + 1} Booked`}</h3>
-    </button> : <button key={i} className='slots' onClick={() => handleShow(i, v.data.nameparking)}>
-            <h3>{`Slot ${i + 1}`}</h3>
-        </button>
+        //     if (!getBookedSlotData) return <></>
+        //     const data = getBookedSlotData.find(({ data }) => data.bookerid == i && data.parking == v.data.nameparking)
+        //     // console.log(data)
+        //     // || currentDAte <= data.endDate
+        //     return data ? <button key={i} className='slots' style={{backgroundColor:"green"}} onClick={() => handleShow(i, v.data.nameparking)}>
+        //     <h3>{`Slot ${i + 1} Booked`}</h3>
+        // </button> : <button key={i} className='slots' onClick={() => handleShow(i, v.data.nameparking)}>
+        //         <h3>{`Slot ${i + 1}`}</h3>
+        //     </button>
+        if (!getBookedSlotData) {
+            return <></>
+        } else if (getBookedSlotData.find(({ data }) => data.bookerid === i && data.parking === v.data.nameparking)) {
+            return <button key={i} className='slots' style={{ backgroundColor: "green" }} onClick={() => handleShow(i, v.data.nameparking)}>
+                <h3>{`Slot ${i + 1} Booked`}</h3>
+            </button>
+        } else {
+            return <button key={i} className='slots' onClick={() => handleShow(i, v.data.nameparking)}>
+                <h3>{`Slot ${i + 1}`}</h3>
+            </button>
+        }
     }
 
 
     return (
         <>
+            <Row>
+                <Col>
+                    <Form>
+                        <Form.Group className="mb-3" onSubmit={bookingHandler}>
+                            <Form.Label>Enter Start time</Form.Label>
+                            <Form.Control type="datetime-local"  value={startDate} onChange={(e) => { setStartDate(e.target.value) }}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Enter End time</Form.Label>
+                            <Form.Control type="datetime-local" value={endDate} onChange={(e) => { setEndDate(e.target.value) }}/>
+                        </Form.Group>
+                        <Button variant="primary" type="submit">
+                            View Available slots
+                        </Button>
+                    </Form>
+
+                </Col>
+            </Row>
             {slotData && slotData.map((v, index) => {
                 return <Row className="text-center mt-2 myd" key={v.data.numberparking}>
                     <h3>{v.data.nameparking}</h3>
                     {new Array(Number(v.data.numberparking)).fill(" ").map((a, i) => {
+
+                // booking find (parkringnumber ===, slot===  )
                         return <Col md={4} key={i} className='my-2'>
                             {bookedSlot(v, i)}
                         </Col>
@@ -142,12 +190,12 @@ export const BookingSlots = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={bookingHandler} ref={form}>
-                    <input type="text" className='form-control m-2' placeholder='Booker id' value={bookerid} onChange={(e) => { setBookerid(e.target.value) }} name='bookerid' />
-                    <input type="text" className='form-control m-2' placeholder='Booker id' value={bookername} onChange={(e) => { setBookername(e.target.value) }} name='bookername'/>
-                    <input type="datetime-local" className='form-control m-2' value={startDate} onChange={(e) => { setStartDate(e.target.value) }} />
-                    <input type="datetime-local" className='form-control m-2' value={endDate} onChange={(e) => { setEndDate(e.target.value) }} />
-                    <input type="hidden" className='form-control m-2' value={message} onChange={(e) => { setmessage(e.target.value) }} name='message'/>
-                    <button className='btn btn-primary mt-2'>Submit</button>
+                        <input type="text" className='form-control m-2' placeholder='Booker id' value={bookerid} onChange={(e) => { setBookerid(e.target.value) }} name='bookerid' />
+                        <input type="text" className='form-control m-2' placeholder='Booker id' value={bookername} onChange={(e) => { setBookername(e.target.value) }} name='bookername' />
+                        <input type="datetime-local" className='form-control m-2' value={startDate} />
+                        <input type="datetime-local" className='form-control m-2' value={endDate}/>
+                        <input type="hidden" className='form-control m-2' value={message} onChange={(e) => { setmessage(e.target.value) }} name='message' />
+                        <button className='btn btn-primary mt-2'>Submit</button>
                     </form>
                 </Modal.Body>
             </Modal>
