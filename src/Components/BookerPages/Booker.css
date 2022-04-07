@@ -6,12 +6,12 @@
 }
 .slots{
         border: 1px solid;
-        height: 10rem;
+        height: 8rem;
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        width: 100%;
+        width: 90%;
     }
 
     .slots:hover{
